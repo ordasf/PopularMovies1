@@ -1,5 +1,7 @@
 package com.project.movies.popular.popularmovies1.utilities;
 
+import android.util.Log;
+
 import com.project.movies.popular.popularmovies1.Movie;
 
 import org.json.JSONArray;
@@ -14,6 +16,15 @@ import java.util.List;
  */
 public final class MovieJSONUtils {
 
+    private final static String TAG = MovieJSONUtils.class.getSimpleName();
+
+    private static final String RESULTS = "results";
+    private static final String STATUS_CODE = "status_code";
+    private static final String STATUS_MESSAGE = "status_message";
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String POSTER_PATH = "poster_path";
+
     /**
      * Method to convert a Json in string format in a #List of #Movie
      *
@@ -27,17 +38,19 @@ public final class MovieJSONUtils {
 
         JSONObject jsonObject = new JSONObject(moviesJsonStr);
 
-        /*
-        * TODO Check status code or status_message
-        * */
+        if (jsonObject.has(STATUS_CODE)) {
+            String statusMessage = jsonObject.getString(STATUS_MESSAGE);
+            Log.d(TAG, statusMessage);
+            throw new JSONException(STATUS_CODE + " " + STATUS_MESSAGE);
+        }
 
-        JSONArray movieArray = jsonObject.getJSONArray("results");
+        JSONArray movieArray = jsonObject.getJSONArray(RESULTS);
 
         for (int i = 0; i < movieArray.length(); i++) {
             JSONObject movieJson = movieArray.getJSONObject(i);
-            long id = movieJson.getLong("id");
-            String title = movieJson.getString("title");
-            String posterPath = movieJson.getString("poster_path");
+            long id = movieJson.getLong(ID);
+            String title = movieJson.getString(TITLE);
+            String posterPath = movieJson.getString(POSTER_PATH);
             Movie movie = new Movie(id, title, posterPath);
             movieList.add(movie);
         }

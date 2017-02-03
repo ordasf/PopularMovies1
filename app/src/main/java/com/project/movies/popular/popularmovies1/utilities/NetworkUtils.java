@@ -30,8 +30,6 @@ public final class NetworkUtils {
 
     private static final String API_KEY_QUERY = "api_key";
 
-    private static final String MOVIE_BASE_URL = POPULAR_MOVIES_URL + POPULAR_ORDER;
-
     final static String KEY = BuildConfig.API_KEY;
 
     /**
@@ -41,9 +39,18 @@ public final class NetworkUtils {
      * @return The URL to use to query the movie db server.
      */
     public static URL buildUrl(String orderType) {
-        Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                .appendQueryParameter(API_KEY_QUERY, KEY)
-                .build();
+        Uri.Builder uriBuilder = Uri.parse(POPULAR_MOVIES_URL).buildUpon();
+
+        if ("popular".equals(orderType)) {
+            uriBuilder.appendPath(POPULAR_ORDER);
+        } else if ("top_rated".equals(orderType)) {
+            uriBuilder.appendPath(TOP_RATED_ORDER);
+        }
+
+        Uri builtUri = uriBuilder.appendQueryParameter(API_KEY_QUERY, KEY).build();
+
+
+        Log.v(TAG, "Built URI " + builtUri);
 
         URL url = null;
         try {
@@ -52,7 +59,7 @@ public final class NetworkUtils {
             e.printStackTrace();
         }
 
-        Log.v(TAG, "Built URI " + url);
+        Log.v(TAG, "Built URL " + url);
 
         return url;
     }

@@ -13,10 +13,17 @@
             android:id="@+id/tv_movie_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            android:textSize="26sp"
+            android:textSize="23sp"
             android:padding="15dp"/>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/pb_loading_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="invisible" />
 
 </RelativeLayout>
