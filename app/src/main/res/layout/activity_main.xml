@@ -6,10 +6,11 @@
     tools:context="com.project.movies.popular.popularmovies1.MainActivity">
 
     <TextView
+        android:id="@+id/tv_movie_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textSize="26sp"
         android:padding="15dp"/>
-    
+
 </RelativeLayout>
