@@ -1,8 +1,10 @@
 package com.project.movies.popular.popularmovies1;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -14,9 +16,46 @@ import java.util.List;
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
 
+    private static final String TAG = MovieListAdapter.class.getSimpleName();
+
     private List<Movie> movieList = new ArrayList<>();
 
-    public MovieListAdapter() {
+    public interface MovieListAdapterOnClickHandler {
+        void onClick(Movie movie);
+    }
+
+    private MovieListAdapterOnClickHandler onClickHandler;
+
+    public MovieListAdapter(MovieListAdapterOnClickHandler onClickHandler) {
+        this.onClickHandler = onClickHandler;
+    }
+
+    /**
+     * ViewHolder for the MovieListAdapter
+     */
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+
+        public TextView mDataListItemTexView;
+
+        public MovieViewHolder(View itemView) {
+            super(itemView);
+
+            mDataListItemTexView = (TextView) itemView.findViewById(R.id.tv_movie_element);
+            itemView.setOnClickListener(this);
+
+        }
+
+        public void bindMovieData(String movieData) {
+            mDataListItemTexView.setText(movieData);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int index = getAdapterPosition();
+            Log.v(TAG, "clicked! " + index);
+            Movie movie = movieList.get(index);
+            onClickHandler.onClick(movie);
+        }
 
     }
 
@@ -30,7 +69,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        holder.bindMovieData(movieList.get(position).toString());
+//        holder.bindMovieData(movieList.get(position).toString());
+        holder.mDataListItemTexView.setText(movieList.get(position).toString());
     }
 
     @Override
@@ -43,23 +83,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     }
 
     public void setMovieList(List<Movie> movieList) {
-        this.movieList = movieList;
-        notifyDataSetChanged();
-    }
-
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView mDataListItemTexView;
-
-        public MovieViewHolder(View itemView) {
-            super(itemView);
-
-            mDataListItemTexView = (TextView) itemView.findViewById(R.id.tv_movie_element);
-
-        }
-
-        public void bindMovieData(String movieData) {
-            mDataListItemTexView.setText(movieData);
+        if (movieList == null) {
+            this.movieList = new ArrayList<>();
+        } else {
+            this.movieList = movieList;
+            notifyDataSetChanged();
         }
     }
+
 }

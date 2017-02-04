@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.project.movies.popular.popularmovies1.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
@@ -22,7 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieListAdapter.MovieListAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -46,11 +47,17 @@ public class MainActivity extends AppCompatActivity {
 
         mMovieListRecyclerView.setHasFixedSize(true);
 
-        movieListAdapter = new MovieListAdapter();
+        movieListAdapter = new MovieListAdapter(this);
         mMovieListRecyclerView.setAdapter(movieListAdapter);
 
         new FetchMovieTask().execute(MovieOrderType.POPULAR);
 
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Log.v(TAG, "clicked!");
+        Toast.makeText(this, movie.toString(), Toast.LENGTH_LONG).show();
     }
 
     public class FetchMovieTask extends AsyncTask<MovieOrderType, Void, List<Movie>> {
