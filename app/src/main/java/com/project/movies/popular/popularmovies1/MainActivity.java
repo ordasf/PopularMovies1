@@ -1,7 +1,9 @@
 package com.project.movies.popular.popularmovies1;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -56,8 +58,9 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
     @Override
     public void onClick(Movie movie) {
-        Log.v(TAG, "clicked!");
-        Toast.makeText(this, movie.toString(), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT, movie.toString());
+        startActivity(intent);
     }
 
     public class FetchMovieTask extends AsyncTask<MovieOrderType, Void, List<Movie>> {

@@ -35,7 +35,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
      */
     public class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        public TextView mDataListItemTexView;
+        private TextView mDataListItemTexView;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
@@ -69,8 +69,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-//        holder.bindMovieData(movieList.get(position).toString());
-        holder.mDataListItemTexView.setText(movieList.get(position).toString());
+        holder.bindMovieData(movieList.get(position).toString());
     }
 
     @Override
