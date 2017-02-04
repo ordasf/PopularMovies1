@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.project.movies.popular.popularmovies1.BuildConfig;
+import com.project.movies.popular.popularmovies1.MovieOrderType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +22,7 @@ public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
-    private static final String POPULAR_MOVIES_URL =
-            "http://api.themoviedb.org/3/movie/";
+    private static final String POPULAR_MOVIES_URL = "http://api.themoviedb.org/3/movie/";
 
     private static final String POPULAR_ORDER = "popular";
 
@@ -38,17 +38,16 @@ public final class NetworkUtils {
      * @param orderType The type or order to append to the query
      * @return The URL to use to query the movie db server.
      */
-    public static URL buildUrl(String orderType) {
+    public static URL buildUrl(MovieOrderType orderType) {
         Uri.Builder uriBuilder = Uri.parse(POPULAR_MOVIES_URL).buildUpon();
 
-        if ("popular".equals(orderType)) {
+        if (orderType == MovieOrderType.POPULAR) {
             uriBuilder.appendPath(POPULAR_ORDER);
-        } else if ("top_rated".equals(orderType)) {
+        } else if (orderType == MovieOrderType.TOP_RATED) {
             uriBuilder.appendPath(TOP_RATED_ORDER);
         }
 
         Uri builtUri = uriBuilder.appendQueryParameter(API_KEY_QUERY, KEY).build();
-
 
         Log.v(TAG, "Built URI " + builtUri);
 
