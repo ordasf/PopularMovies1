@@ -3,7 +3,6 @@ package com.project.movies.popular.popularmovies1;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.project.movies.popular.popularmovies1.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mLoadingMain.setVisibility(View.VISIBLE);
+            showLoadingIndicator();
         }
 
         @Override
@@ -104,11 +102,8 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         @Override
         protected void onPostExecute(List<Movie> result) {
             super.onPostExecute(result);
-
-            mLoadingMain.setVisibility(View.INVISIBLE);
-
+            hideLoadingIndicator();
             movieListAdapter.setMovieList(result);
-
         }
 
     }
@@ -133,5 +128,15 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showLoadingIndicator() {
+        mMovieListRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingMain.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoadingIndicator() {
+        mLoadingMain.setVisibility(View.INVISIBLE);
+        mMovieListRecyclerView.setVisibility(View.VISIBLE);
     }
 }

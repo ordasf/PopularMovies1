@@ -6,8 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,24 +41,27 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
      */
     public class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        private TextView mDataListItemTexView;
+        private Movie movie;
+
+        private ImageView mMoviePosterImageView;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
-
-            mDataListItemTexView = (TextView) itemView.findViewById(R.id.tv_movie_element);
             itemView.setOnClickListener(this);
+
+            mMoviePosterImageView = (ImageView) itemView.findViewById(R.id.iv_movie_poster_list);
 
         }
 
-        public void bindMovieData(String movieData) {
-            mDataListItemTexView.setText(movieData);
+        public void bindMovieData(Movie movie) {
+            this.movie = movie;
+            URL imageURL = NetworkUtils.buildImageUrl(movie.getPosterPath());
+            Picasso.with(mMoviePosterImageView.getContext()).load(imageURL.toString()).into(mMoviePosterImageView);
         }
 
         @Override
         public void onClick(View v) {
             int index = getAdapterPosition();
-            Log.v(TAG, "clicked! " + index);
             Movie movie = movieList.get(index);
             onClickHandler.onClick(movie);
         }
@@ -69,7 +78,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        holder.bindMovieData(movieList.get(position).toString());
+        holder.bindMovieData(movieList.get(position));
     }
 
     @Override

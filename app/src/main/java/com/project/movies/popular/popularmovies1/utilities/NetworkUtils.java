@@ -24,6 +24,10 @@ public final class NetworkUtils {
 
     private static final String POPULAR_MOVIES_URL = "http://api.themoviedb.org/3/movie/";
 
+    private static final String IMAGE_MOVIE_BASE_URL = " http://image.tmdb.org/t/p/";
+
+    private static final String IMAGE_SIZE_PATH = "w185";
+
     private static final String POPULAR_ORDER = "popular";
 
     private static final String TOP_RATED_ORDER = "top_rated";
@@ -64,6 +68,27 @@ public final class NetworkUtils {
     }
 
     /**
+     * This method will construct the URL to the poster movie
+     *
+     * @param imagePath relative path of the poster image
+     * @return and URL with the complete URL
+     */
+    public static URL buildImageUrl(String imagePath) {
+
+        Uri uri = Uri.parse(IMAGE_MOVIE_BASE_URL).buildUpon()
+                .appendEncodedPath(IMAGE_SIZE_PATH)
+                .appendEncodedPath(imagePath).build();
+
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    /**
      * This method returns the entire result from the HTTP response.
      *
      * @param url The URL to fetch the HTTP response from.
@@ -88,4 +113,5 @@ public final class NetworkUtils {
             urlConnection.disconnect();
         }
     }
+
 }
