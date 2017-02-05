@@ -22,7 +22,7 @@ public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
-    private static final String POPULAR_MOVIES_URL = "http://api.themoviedb.org/3/movie/";
+    private static final String BASE_MOVIES_URL = "http://api.themoviedb.org/3/movie/";
 
     private static final String IMAGE_MOVIE_BASE_URL = " http://image.tmdb.org/t/p/";
 
@@ -34,6 +34,10 @@ public final class NetworkUtils {
 
     private static final String API_KEY_QUERY = "api_key";
 
+    private static final String RELEASE_DATES = "release_dates";
+
+    private static final String RATING = "";
+
     final static String KEY = BuildConfig.API_KEY;
 
     /**
@@ -43,7 +47,7 @@ public final class NetworkUtils {
      * @return The URL to use to query the movie db server.
      */
     public static URL buildUrl(MovieOrderType orderType) {
-        Uri.Builder uriBuilder = Uri.parse(POPULAR_MOVIES_URL).buildUpon();
+        Uri.Builder uriBuilder = Uri.parse(BASE_MOVIES_URL).buildUpon();
 
         if (orderType == MovieOrderType.POPULAR) {
             uriBuilder.appendPath(POPULAR_ORDER);
@@ -52,8 +56,6 @@ public final class NetworkUtils {
         }
 
         Uri builtUri = uriBuilder.appendQueryParameter(API_KEY_QUERY, KEY).build();
-
-        Log.v(TAG, "Built URI " + builtUri);
 
         URL url = null;
         try {
@@ -85,6 +87,34 @@ public final class NetworkUtils {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
+        Log.v(TAG, "Built image URL " + url);
+
+        return url;
+    }
+
+    /**
+     * Builds the URL to get the information of a movie given its ID
+     *
+     * @param movieId id of the movie that will be used in the URL
+     * @return URL built
+     */
+    public static URL buildMovieDetailUrl(long movieId) {
+
+        Uri uri = Uri.parse(BASE_MOVIES_URL).buildUpon()
+                .appendEncodedPath(Long.toString(movieId))
+                .appendQueryParameter(API_KEY_QUERY, KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built movie detail URL " + url);
+
         return url;
     }
 

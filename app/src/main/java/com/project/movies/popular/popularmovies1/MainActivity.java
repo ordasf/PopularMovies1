@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
         mMovieListRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_list);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false);
         mMovieListRecyclerView.setLayoutManager(layoutManager);
 
         mMovieListRecyclerView.setHasFixedSize(true);
@@ -57,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
     @Override
     public void onClick(Movie movie) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(Intent.EXTRA_TEXT, movie.toString());
+        intent.putExtra("movieId", movie.getId());
+        intent.putExtra("movieTitle", movie.getTitle());
+        intent.putExtra("moviePoster", movie.getPosterPath());
         startActivity(intent);
     }
 
@@ -78,12 +81,14 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
             }
 
             URL movieUrl = NetworkUtils.buildUrl(option);
+            // TODO handle no connection in devide
 
             String response = null;
             try {
                 response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
             } catch (IOException e) {
                 e.printStackTrace();
+                // TODO Handle exception properly
             }
 
             List<Movie> movieList = new ArrayList<>();

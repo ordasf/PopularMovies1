@@ -8,6 +8,11 @@ public final class Movie {
     private long id;
     private String title;
     private String posterPath;
+    private String overview;
+    private String releaseDate;
+    private long rating;
+
+    public Movie() {}
 
     public Movie(long id, String title, String posterPath) {
         this.id = id;
@@ -39,12 +44,39 @@ public final class Movie {
         this.posterPath = posterPath;
     }
 
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public long getRating() {
+        return rating;
+    }
+
+    public void setRating(long rating) {
+        this.rating = rating;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", posterPath='" + posterPath + '\'' +
+                ", overview='" + overview + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                ", rating=" + rating +
                 '}';
     }
 }

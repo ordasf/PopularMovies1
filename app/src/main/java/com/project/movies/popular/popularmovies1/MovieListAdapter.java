@@ -1,16 +1,13 @@
 package com.project.movies.popular.popularmovies1;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -41,8 +38,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
      */
     public class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-        private Movie movie;
-
         private ImageView mMoviePosterImageView;
 
         public MovieViewHolder(View itemView) {
@@ -54,7 +49,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         }
 
         public void bindMovieData(Movie movie) {
-            this.movie = movie;
             URL imageURL = NetworkUtils.buildImageUrl(movie.getPosterPath());
             Picasso.with(mMoviePosterImageView.getContext()).load(imageURL.toString()).into(mMoviePosterImageView);
         }

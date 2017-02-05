@@ -20,6 +20,7 @@
         <activity
             android:name=".MovieDetailActivity"
             android:parentActivityName=".MainActivity">
+            <!-- TODO Check if it is necessary to add something else to the manifest -->
         </activity>
     </application>
 

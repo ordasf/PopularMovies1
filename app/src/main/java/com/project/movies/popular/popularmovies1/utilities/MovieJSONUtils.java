@@ -46,6 +46,7 @@ public final class MovieJSONUtils {
 
         JSONArray movieArray = jsonObject.getJSONArray(RESULTS);
 
+        // TODO Check if these elements are present in the json
         for (int i = 0; i < movieArray.length(); i++) {
             JSONObject movieJson = movieArray.getJSONObject(i);
             long id = movieJson.getLong(ID);
@@ -56,6 +57,28 @@ public final class MovieJSONUtils {
         }
 
         return movieList;
+
+    }
+
+    public static Movie getMovieDetailsFromJson(String movieDetailJson) throws JSONException {
+
+        Movie movie = new Movie();
+
+        JSONObject jsonObject = new JSONObject(movieDetailJson);
+
+        if (jsonObject.has(STATUS_CODE)) {
+            String statusMessage = jsonObject.getString(STATUS_MESSAGE);
+            Log.d(TAG, statusMessage);
+            throw new JSONException(STATUS_CODE + " " + STATUS_MESSAGE);
+        }
+
+        movie.setTitle(jsonObject.getString("original_title"));
+        movie.setOverview(jsonObject.getString("overview"));
+        movie.setPosterPath(jsonObject.getString(POSTER_PATH));
+        movie.setReleaseDate(jsonObject.getString("release_date"));
+        movie.setRating(jsonObject.getLong("vote_average"));
+
+        return movie;
 
     }
 
