@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.project.movies.popular.popularmovies1.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
@@ -91,13 +92,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
 
             URL movieUrl = NetworkUtils.buildMovieDetailUrl(movieId);
-            // TODO handle no connection in devide
+            // TODO handle no connection in device
 
             String response = null;
             try {
                 response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e(TAG, "There is a problem parsing the JSON");
                 // TODO Handle exception properly
             }
 
@@ -106,9 +108,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 movie = MovieJSONUtils.getMovieDetailsFromJson(response);
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.d(TAG, "There is a problem parsing the JSON");
-                // TODO Handle Json exeption
-//                Toast.makeText(, e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "There is a problem parsing the JSON");
+                // TODO Handle exception properly
             }
 
             return movie;

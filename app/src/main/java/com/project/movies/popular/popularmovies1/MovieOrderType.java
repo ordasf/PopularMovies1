@@ -5,6 +5,17 @@ package com.project.movies.popular.popularmovies1;
  */
 
 public enum MovieOrderType {
-    POPULAR,
-    TOP_RATED
+    POPULAR("popular"),
+    TOP_RATED("top_rated");
+
+    private final String value;
+
+    MovieOrderType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
 }

@@ -5,12 +5,12 @@ package com.project.movies.popular.popularmovies1;
  */
 public final class Movie {
 
-    private long id;
-    private String title;
-    private String posterPath;
-    private String overview;
-    private String releaseDate;
-    private long rating;
+    private long id = 0L;
+    private String title = "";
+    private String posterPath = "";
+    private String overview = "";
+    private String releaseDate = "";
+    private long rating = 0L;
 
     public Movie() {}
 

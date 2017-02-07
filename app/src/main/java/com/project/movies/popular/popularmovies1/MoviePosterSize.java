@@ -1,8 +1,26 @@
 package com.project.movies.popular.popularmovies1;
 
 /**
- * Enum with the different posible sizes allowed by the movie database API
+ * Enum with the different possible sizes allowed by the movie database API
  */
 public enum MoviePosterSize {
-    W92, W154, W185, W342, W500, W780, ORIGINAL
+    W92("w92"),
+    W154("w154"),
+    W185("w185"),
+    W342("w342"),
+    W500("w500"),
+    W780("w780"),
+    ORIGINAL("original");
+
+    private final String value;
+
+    MoviePosterSize(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+
 }

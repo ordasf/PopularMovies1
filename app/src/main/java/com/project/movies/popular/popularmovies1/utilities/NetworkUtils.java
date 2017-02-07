@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.project.movies.popular.popularmovies1.BuildConfig;
 import com.project.movies.popular.popularmovies1.MovieOrderType;
+import com.project.movies.popular.popularmovies1.MoviePosterSize;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,17 +27,13 @@ public final class NetworkUtils {
 
     private static final String IMAGE_MOVIE_BASE_URL = " http://image.tmdb.org/t/p/";
 
-    private static final String IMAGE_SIZE_PATH = "w185";
+    private static final MoviePosterSize IMAGE_SIZE_PATH = MoviePosterSize.W342;
 
     private static final String POPULAR_ORDER = "popular";
 
     private static final String TOP_RATED_ORDER = "top_rated";
 
     private static final String API_KEY_QUERY = "api_key";
-
-    private static final String RELEASE_DATES = "release_dates";
-
-    private static final String RATING = "";
 
     final static String KEY = BuildConfig.API_KEY;
 
@@ -49,11 +46,13 @@ public final class NetworkUtils {
     public static URL buildUrl(MovieOrderType orderType) {
         Uri.Builder uriBuilder = Uri.parse(BASE_MOVIES_URL).buildUpon();
 
-        if (orderType == MovieOrderType.POPULAR) {
+        uriBuilder.appendEncodedPath(orderType.getValue());
+
+        /*if (orderType == MovieOrderType.POPULAR) {
             uriBuilder.appendPath(POPULAR_ORDER);
         } else if (orderType == MovieOrderType.TOP_RATED) {
             uriBuilder.appendPath(TOP_RATED_ORDER);
-        }
+        }*/
 
         Uri builtUri = uriBuilder.appendQueryParameter(API_KEY_QUERY, KEY).build();
 
@@ -62,6 +61,7 @@ public final class NetworkUtils {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, "Movie URL could not be built");
         }
 
         Log.v(TAG, "Built URL " + url);
@@ -78,7 +78,7 @@ public final class NetworkUtils {
     public static URL buildImageUrl(String imagePath) {
 
         Uri uri = Uri.parse(IMAGE_MOVIE_BASE_URL).buildUpon()
-                .appendEncodedPath(IMAGE_SIZE_PATH)
+                .appendEncodedPath(IMAGE_SIZE_PATH.getValue())
                 .appendEncodedPath(imagePath).build();
 
         URL url = null;
@@ -86,6 +86,7 @@ public final class NetworkUtils {
             url = new URL(uri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, "Movie image URL could not be built");
         }
 
         Log.v(TAG, "Built image URL " + url);
@@ -111,6 +112,7 @@ public final class NetworkUtils {
             url = new URL(uri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, "Movie detail URL could not be built");
         }
 
         Log.v(TAG, "Built movie detail URL " + url);

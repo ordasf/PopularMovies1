@@ -144,4 +144,13 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         mLoadingMain.setVisibility(View.INVISIBLE);
         mMovieListRecyclerView.setVisibility(View.VISIBLE);
     }
+
+    private void showErrorMessage() {
+        // TODO Show error message
+    }
+
+    private void hideErrorMessage() {
+        // TODO Hide error message
+    }
+
 }
