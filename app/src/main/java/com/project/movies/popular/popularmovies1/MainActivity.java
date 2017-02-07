@@ -1,6 +1,9 @@
 package com.project.movies.popular.popularmovies1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +89,13 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
                 option = params[0];
             }
 
+            List<Movie> movieList = new ArrayList<>();
+            if (!isOnline()) {
+                Log.d(TAG, "No connectivity");
+                showErrorMessage();
+                return movieList;
+            }
+
             URL movieUrl = NetworkUtils.buildUrl(option);
 
             String response = null;
@@ -97,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
                 showErrorMessage();
             }
 
-            List<Movie> movieList = new ArrayList<>();
+
             try {
                 movieList.addAll(MovieJSONUtils.getMoviesFromJson(response));
             } catch (JSONException e) {
@@ -138,6 +148,14 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
     }
 
     private void showLoadingIndicator() {

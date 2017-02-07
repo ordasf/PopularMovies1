@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -37,6 +38,10 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView mMovieRatingTextView;
 
     private ProgressBar mLoadingDetail;
+
+    private LinearLayout mContainer;
+
+    private TextView mErrorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         mLoadingDetail = (ProgressBar) findViewById(R.id.pb_loading_detail);
 
+        mContainer = (LinearLayout) findViewById(R.id.ll_detail_container);
+
+        mErrorTextView = (TextView) findViewById(R.id.tv_error_detail);
+
         new MovieDetailReleaseDateAsyncTask().execute(movieId);
 
     }
@@ -80,6 +89,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            hideErrorMessage();
             showLoadingIndicator();
         }
 
@@ -95,6 +105,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             if (!isOnline()) {
                 // Check if the device is connected to the network, in case it's not don't bother
                 // to try to make de API calls, these are going to fail
+                Log.d(TAG, "No connectivity");
+                showErrorMessage();
                 return movie;
             }
 
@@ -106,7 +118,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG, "There is a problem parsing the JSON");
-                // TODO Handle exception properly
+                showErrorMessage();
             }
 
             try {
@@ -114,7 +126,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "There is a problem parsing the JSON");
-                // TODO Handle exception properly
+                showErrorMessage();
             }
 
             return movie;
@@ -148,6 +160,17 @@ public class MovieDetailActivity extends AppCompatActivity {
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
+
+    private void showErrorMessage() {
+        mContainer.setVisibility(View.INVISIBLE);
+        mErrorTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideErrorMessage() {
+        mErrorTextView.setVisibility(View.INVISIBLE);
+        mContainer.setVisibility(View.VISIBLE);
     }
 
 }

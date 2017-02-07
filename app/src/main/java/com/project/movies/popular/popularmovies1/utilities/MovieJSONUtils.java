@@ -46,7 +46,6 @@ public final class MovieJSONUtils {
 
         JSONArray movieArray = jsonObject.getJSONArray(RESULTS);
 
-        // TODO Check if these elements are present in the json
         for (int i = 0; i < movieArray.length(); i++) {
             JSONObject movieJson = movieArray.getJSONObject(i);
             long id = movieJson.getLong(ID);

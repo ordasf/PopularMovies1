@@ -6,4 +6,5 @@
     <string name="release_date">Date of the release: </string>
     <string name="average_rating">Average rating: </string>
     <string name="synopsis">Synopsis:</string>
+    <string name="error_message">There was a problem retrieving the information</string>
 </resources>

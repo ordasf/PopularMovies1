@@ -6,6 +6,7 @@
     tools:context="com.project.movies.popular.popularmovies1.MovieDetailActivity">
 
     <LinearLayout
+        android:id="@+id/ll_detail_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -72,5 +73,13 @@
         android:layout_height="70dp"
         android:visibility="invisible"
         android:layout_gravity="center_horizontal|center_vertical" />
+
+    <TextView
+        android:id="@+id/tv_error_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="@string/error_message"
+        android:visibility="invisible"/>
 
 </FrameLayout>
