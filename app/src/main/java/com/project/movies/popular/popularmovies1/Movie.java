@@ -10,7 +10,7 @@ public final class Movie {
     private String posterPath = "";
     private String overview = "";
     private String releaseDate = "";
-    private long rating = 0L;
+    private float rating = 0L;
 
     public Movie() {}
 
@@ -60,11 +60,11 @@ public final class Movie {
         this.releaseDate = releaseDate;
     }
 
-    public long getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(long rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 

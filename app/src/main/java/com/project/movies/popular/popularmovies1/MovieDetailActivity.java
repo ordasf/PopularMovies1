@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.project.movies.popular.popularmovies1.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
@@ -19,8 +18,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -120,8 +117,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             super.onPostExecute(response);
             hideLoadingIndicator();
             mSynopsisTextView.setText(response.getOverview());
-            mMovieReleaseDateTextView.setText(response.getReleaseDate());
-            mMovieRatingTextView.setText(Long.toString(response.getRating()));
+            mMovieReleaseDateTextView.append(response.getReleaseDate());
+            mMovieRatingTextView.append(Float.toString(response.getRating()));
         }
 
     }

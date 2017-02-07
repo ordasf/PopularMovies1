@@ -5,46 +5,67 @@
     android:layout_height="match_parent"
     tools:context="com.project.movies.popular.popularmovies1.MovieDetailActivity">
 
-    <TextView
-        android:id="@+id/tv_movie_detail"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"/>
+        android:orientation="vertical"
+        android:padding="5dp" >
 
-    <TextView
-        android:id="@+id/tv_detail_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="35sp"
-        android:layout_gravity="center_horizontal"
-        android:text="Test title"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
 
-    <ImageView
-        android:id="@+id/iv_detail_poster"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+            <ImageView
+                android:id="@+id/iv_detail_poster"
+                android:contentDescription="movie_poster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/tv_detail_synopsis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Test synopsis"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="5dp">
 
-    <TextView
-        android:id="@+id/tv_detail_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Test rating"/>
+                <TextView
+                    android:id="@+id/tv_detail_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test title"
+                    android:textSize="30sp"/>
 
-    <TextView
-        android:id="@+id/tv_detail_release_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Test release date"/>
+                <TextView
+                    android:id="@+id/tv_detail_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date of release: "/>
+
+                <TextView
+                    android:id="@+id/tv_detail_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Average rating: "/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Synopsis"
+            android:textSize="25sp"
+            android:paddingTop="5dp"/>
+
+        <TextView
+            android:id="@+id/tv_detail_synopsis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test synopsis"
+            android:paddingTop="5dp"/>
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pb_loading_detail"
