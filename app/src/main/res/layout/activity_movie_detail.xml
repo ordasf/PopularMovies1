@@ -18,7 +18,7 @@
 
             <ImageView
                 android:id="@+id/iv_detail_poster"
-                android:contentDescription="movie_poster"
+                android:contentDescription="@string/iv_content_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -26,26 +26,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingLeft="5dp">
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
 
                 <TextView
                     android:id="@+id/tv_detail_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test title"
                     android:textSize="30sp"/>
 
                 <TextView
                     android:id="@+id/tv_detail_release_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date of release: "/>
+                    android:text="@string/release_date"/>
 
                 <TextView
                     android:id="@+id/tv_detail_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Average rating: "/>
+                    android:text="@string/average_rating"/>
 
             </LinearLayout>
 
@@ -54,7 +54,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Synopsis"
+            android:text="@string/synopsis"
             android:textSize="25sp"
             android:paddingTop="5dp"/>
 
@@ -62,7 +62,6 @@
             android:id="@+id/tv_detail_synopsis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Test synopsis"
             android:paddingTop="5dp"/>
 
     </LinearLayout>

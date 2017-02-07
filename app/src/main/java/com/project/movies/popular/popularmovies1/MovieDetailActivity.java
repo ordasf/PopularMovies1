@@ -1,6 +1,9 @@
 package com.project.movies.popular.popularmovies1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -88,8 +91,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                 movieId = params[0];
             }
 
+            Movie movie = new Movie();
+            if (!isOnline()) {
+                // Check if the device is connected to the network, in case it's not don't bother
+                // to try to make de API calls, these are going to fail
+                return movie;
+            }
+
             URL movieUrl = NetworkUtils.buildMovieDetailUrl(movieId);
-            // TODO handle no connection in device
 
             String response = null;
             try {
@@ -100,7 +109,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                 // TODO Handle exception properly
             }
 
-            Movie movie = new Movie();
             try {
                 movie = MovieJSONUtils.getMovieDetailsFromJson(response);
             } catch (JSONException e) {
@@ -133,6 +141,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         mLoadingDetail.setVisibility(View.INVISIBLE);
         mMovieReleaseDateTextView.setVisibility(View.VISIBLE);
         mMovieRatingTextView.setVisibility(View.VISIBLE);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
 }

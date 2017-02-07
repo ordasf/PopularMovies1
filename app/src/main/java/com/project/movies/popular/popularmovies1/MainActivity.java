@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.project.movies.popular.popularmovies1.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
     private MovieListAdapter movieListAdapter;
 
+    private TextView mErrorTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
         movieListAdapter = new MovieListAdapter(this);
         mMovieListRecyclerView.setAdapter(movieListAdapter);
+
+        mErrorTextView = (TextView) findViewById(R.id.tv_error_main);
 
         new FetchMovieTask().execute(MovieOrderType.POPULAR);
 
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            hideErrorMessage();
             showLoadingIndicator();
         }
 
@@ -81,14 +87,14 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
             }
 
             URL movieUrl = NetworkUtils.buildUrl(option);
-            // TODO handle no connection in devide
 
             String response = null;
             try {
                 response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
             } catch (IOException e) {
                 e.printStackTrace();
-                // TODO Handle exception properly
+                Log.d(TAG, "There is a problem getting the response");
+                showErrorMessage();
             }
 
             List<Movie> movieList = new ArrayList<>();
@@ -97,8 +103,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d(TAG, "There is a problem parsing the JSON");
-                // TODO Handle Json exeption
-//                Toast.makeText(, e.getMessage(), Toast.LENGTH_LONG).show();
+                showErrorMessage();
             }
 
             return movieList;
@@ -146,11 +151,13 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
     }
 
     private void showErrorMessage() {
-        // TODO Show error message
+        mMovieListRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorTextView.setVisibility(View.VISIBLE);
     }
 
     private void hideErrorMessage() {
-        // TODO Hide error message
+        mErrorTextView.setVisibility(View.INVISIBLE);
+        mMovieListRecyclerView.setVisibility(View.VISIBLE);
     }
 
 }
