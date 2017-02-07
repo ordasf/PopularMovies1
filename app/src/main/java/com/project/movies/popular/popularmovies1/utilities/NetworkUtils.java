@@ -27,11 +27,7 @@ public final class NetworkUtils {
 
     private static final String IMAGE_MOVIE_BASE_URL = " http://image.tmdb.org/t/p/";
 
-    private static final MoviePosterSize IMAGE_SIZE_PATH = MoviePosterSize.W342;
-
-    private static final String POPULAR_ORDER = "popular";
-
-    private static final String TOP_RATED_ORDER = "top_rated";
+    private static final MoviePosterSize IMAGE_SIZE_PATH = MoviePosterSize.W500;
 
     private static final String API_KEY_QUERY = "api_key";
 

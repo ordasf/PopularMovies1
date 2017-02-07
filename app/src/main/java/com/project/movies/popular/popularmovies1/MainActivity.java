@@ -8,8 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
         mMovieListRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_list);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, calculateNoOfColumns(getBaseContext()), GridLayoutManager.VERTICAL, false);
         mMovieListRecyclerView.setLayoutManager(layoutManager);
 
         mMovieListRecyclerView.setHasFixedSize(true);
@@ -178,4 +178,10 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         mMovieListRecyclerView.setVisibility(View.VISIBLE);
     }
 
+    public int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int noOfColumns = (int) (dpWidth / 180);
+        return noOfColumns;
+    }
 }
