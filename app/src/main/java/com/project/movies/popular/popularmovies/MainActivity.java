@@ -7,6 +7,9 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,15 +28,20 @@ import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MovieListAdapter.MovieListAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements
+        MovieListAdapter.MovieListAdapterOnClickHandler, LoaderManager.LoaderCallbacks<List<Movie>> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final String INSTANCE_STATE_BUNDLE_ORDER_KEY = "order_key";
+
+    private static final int LOADER_MOVIE_LIST_ID = 1000;
+    private static final String LOADER_ORDER_TYPE_KEY = "loader_order_type_key";
 
     private MovieOrderType movieOrderType = MovieOrderType.POPULAR;
 
@@ -71,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
             }
         }
 
-        new FetchMovieTask().execute(movieOrderType);
+        startLoader();
 
     }
 
@@ -88,59 +96,83 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         startActivity(intent);
     }
 
-    public class FetchMovieTask extends AsyncTask<MovieOrderType, Void, List<Movie>> {
+    private void startLoader() {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            hideErrorMessage();
-            showLoadingIndicator();
+        Bundle loaderBundle = new Bundle();
+        loaderBundle.putString(LOADER_ORDER_TYPE_KEY, movieOrderType.getValue());
+
+        LoaderManager loaderManager = getSupportLoaderManager();
+
+        Loader<List<Movie>> movieListLoader = loaderManager.getLoader(LOADER_MOVIE_LIST_ID);
+        if (movieListLoader == null) {
+            loaderManager.initLoader(LOADER_MOVIE_LIST_ID, loaderBundle, this);
+        } else {
+            loaderManager.restartLoader(LOADER_MOVIE_LIST_ID, loaderBundle, this);
         }
 
-        @Override
-        protected List<Movie> doInBackground(MovieOrderType... params) {
+    }
 
-            MovieOrderType option = MovieOrderType.POPULAR;
-            if (params != null) {
-                option = params[0];
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int id, final Bundle args) {
+        return new AsyncTaskLoader<List<Movie>>(this) {
+
+            @Override
+            protected void onStartLoading() {
+                super.onStartLoading();
+                if (args == null) {
+                    return;
+                }
+                hideErrorMessage();
+                showLoadingIndicator();
+                forceLoad();
             }
 
-            List<Movie> movieList = new ArrayList<>();
-            if (!isOnline()) {
-                Log.d(TAG, "No connectivity");
-                showErrorMessage();
+            @Override
+            public List<Movie> loadInBackground() {
+
+                MovieOrderType option = MovieOrderType.getFromString(args.getString(LOADER_ORDER_TYPE_KEY));
+
+                List<Movie> movieList = new ArrayList<>();
+                if (!isOnline()) {
+                    Log.d(TAG, "No connectivity");
+                    showErrorMessage();
+                    return movieList;
+                }
+
+                URL movieUrl = NetworkUtils.buildUrl(option);
+
+                String response = null;
+                try {
+                    response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "There is a problem getting the response");
+                    showErrorMessage();
+                }
+
+
+                try {
+                    movieList.addAll(MovieJSONUtils.getMoviesFromJson(response));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "There is a problem parsing the JSON");
+                    showErrorMessage();
+                }
+
                 return movieList;
             }
 
-            URL movieUrl = NetworkUtils.buildUrl(option);
+        };
+    }
 
-            String response = null;
-            try {
-                response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(TAG, "There is a problem getting the response");
-                showErrorMessage();
-            }
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> result) {
+        hideLoadingIndicator();
+        movieListAdapter.setMovieList(result);
+    }
 
-
-            try {
-                movieList.addAll(MovieJSONUtils.getMoviesFromJson(response));
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.d(TAG, "There is a problem parsing the JSON");
-                showErrorMessage();
-            }
-
-            return movieList;
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> result) {
-            super.onPostExecute(result);
-            hideLoadingIndicator();
-            movieListAdapter.setMovieList(result);
-        }
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {
 
     }
 
@@ -157,11 +189,11 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
         int idSelected = item.getItemId();
         if (idSelected == R.id.action_order_popular) {
             movieOrderType = MovieOrderType.POPULAR;
-            new FetchMovieTask().execute(movieOrderType);
+            startLoader();
             return true;
         } else if (idSelected == R.id.action_order_top_rated) {
             movieOrderType = MovieOrderType.TOP_RATED;
-            new FetchMovieTask().execute(movieOrderType);
+            startLoader();
             return true;
         }
 
