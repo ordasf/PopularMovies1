@@ -48,25 +48,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
-        Intent intent = getIntent();
-
-        long movieId = 0L;
-        if (intent.getExtras().containsKey("movieId")) {
-            movieId = intent.getExtras().getLong("movieId");
-        }
-
         mMovieTitleTextView = (TextView) findViewById(R.id.tv_detail_title);
-        if (intent.getExtras().containsKey("movieTitle")) {
-            String text = intent.getExtras().getString("movieTitle");
-            mMovieTitleTextView.setText(text);
-        }
 
         mMoviePosterImageView = (ImageView) findViewById(R.id.iv_detail_poster);
-        if (intent.getExtras().containsKey("moviePoster")) {
-            String posterPath = intent.getExtras().getString("moviePoster");
-            URL imageURL = NetworkUtils.buildImageUrl(posterPath);
-            Picasso.with(mMoviePosterImageView.getContext()).load(imageURL.toString()).into(mMoviePosterImageView);
-        }
 
         mSynopsisTextView = (TextView) findViewById(R.id.tv_detail_synopsis);
 
@@ -79,6 +63,26 @@ public class MovieDetailActivity extends AppCompatActivity {
         mContainer = (LinearLayout) findViewById(R.id.ll_detail_container);
 
         mErrorTextView = (TextView) findViewById(R.id.tv_error_detail);
+
+        Intent intent = getIntent();
+
+        Movie movie = null;
+        if (intent.getExtras().containsKey("MOVIE")) {
+            movie = (Movie) intent.getExtras().get("MOVIE");
+        }
+
+        if (movie == null) {
+            Log.e(TAG, "The movie object has not been correctly parceled");
+            return;
+        }
+
+        long movieId = movie.getId();
+
+        mMovieTitleTextView.setText(movie.getTitle());
+
+        String posterPath = movie.getPosterPath();
+        URL imageURL = NetworkUtils.buildImageUrl(posterPath);
+        Picasso.with(mMoviePosterImageView.getContext()).load(imageURL.toString()).into(mMoviePosterImageView);
 
         new MovieDetailReleaseDateAsyncTask().execute(movieId);
 

@@ -1,9 +1,12 @@
 package com.project.movies.popular.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Class to contain the basic information of a Movie
  */
-public final class Movie {
+public final class Movie implements Parcelable {
 
     private long id = 0L;
     private String title = "";
@@ -79,4 +82,42 @@ public final class Movie {
                 ", rating=" + rating +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.posterPath);
+        dest.writeString(this.overview);
+        dest.writeString(this.releaseDate);
+        dest.writeFloat(this.rating);
+    }
+
+    protected Movie(Parcel in) {
+        this.id = in.readLong();
+        this.title = in.readString();
+        this.posterPath = in.readString();
+        this.overview = in.readString();
+        this.releaseDate = in.readString();
+        this.rating = in.readFloat();
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
 }
