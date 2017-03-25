@@ -18,4 +18,15 @@ public enum MovieOrderType {
         return value;
     }
 
+    public static MovieOrderType getFromString(String orderString) {
+
+        for (MovieOrderType type : MovieOrderType.values()) {
+            if (type.getValue().equals(orderString)) {
+                return type;
+            }
+        }
+
+        throw new IllegalArgumentException("The argument for the MovieOrderType enum was incorrect");
+    }
+
 }

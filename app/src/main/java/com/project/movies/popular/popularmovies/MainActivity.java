@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +32,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MovieListAdapter.MovieListAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final String INSTANCE_STATE_BUNDLE_ORDER_KEY = "order_key";
+
+    private MovieOrderType movieOrderType = MovieOrderType.POPULAR;
 
     private ProgressBar mLoadingMain;
 
@@ -59,8 +64,21 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
         mErrorTextView = (TextView) findViewById(R.id.tv_error_main);
 
-        new FetchMovieTask().execute(MovieOrderType.POPULAR);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(INSTANCE_STATE_BUNDLE_ORDER_KEY)) {
+                String orderTypeString = savedInstanceState.getString(INSTANCE_STATE_BUNDLE_ORDER_KEY);
+                movieOrderType = MovieOrderType.getFromString(orderTypeString);
+            }
+        }
 
+        new FetchMovieTask().execute(movieOrderType);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(INSTANCE_STATE_BUNDLE_ORDER_KEY, movieOrderType.getValue());
     }
 
     @Override
@@ -138,10 +156,12 @@ public class MainActivity extends AppCompatActivity implements MovieListAdapter.
 
         int idSelected = item.getItemId();
         if (idSelected == R.id.action_order_popular) {
-            new FetchMovieTask().execute(MovieOrderType.POPULAR);
+            movieOrderType = MovieOrderType.POPULAR;
+            new FetchMovieTask().execute(movieOrderType);
             return true;
         } else if (idSelected == R.id.action_order_top_rated) {
-            new FetchMovieTask().execute(MovieOrderType.TOP_RATED);
+            movieOrderType = MovieOrderType.TOP_RATED;
+            new FetchMovieTask().execute(movieOrderType);
             return true;
         }
 
