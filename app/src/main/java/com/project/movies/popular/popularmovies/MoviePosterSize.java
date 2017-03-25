@@ -1,4 +1,4 @@
-package com.project.movies.popular.popularmovies1;
+package com.project.movies.popular.popularmovies;
 
 /**
  * Enum with the different possible sizes allowed by the movie database API

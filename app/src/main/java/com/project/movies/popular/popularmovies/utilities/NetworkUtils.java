@@ -1,11 +1,11 @@
-package com.project.movies.popular.popularmovies1.utilities;
+package com.project.movies.popular.popularmovies.utilities;
 
 import android.net.Uri;
 import android.util.Log;
 
-import com.project.movies.popular.popularmovies1.BuildConfig;
-import com.project.movies.popular.popularmovies1.MovieOrderType;
-import com.project.movies.popular.popularmovies1.MoviePosterSize;
+import com.project.movies.popular.popularmovies.BuildConfig;
+import com.project.movies.popular.popularmovies.MovieOrderType;
+import com.project.movies.popular.popularmovies.MoviePosterSize;
 
 import java.io.IOException;
 import java.io.InputStream;

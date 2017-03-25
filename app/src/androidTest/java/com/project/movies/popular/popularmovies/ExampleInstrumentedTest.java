@@ -1,4 +1,4 @@
-package com.project.movies.popular.popularmovies1;
+package com.project.movies.popular.popularmovies;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

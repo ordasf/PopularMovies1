@@ -1,8 +1,8 @@
-package com.project.movies.popular.popularmovies1.utilities;
+package com.project.movies.popular.popularmovies.utilities;
 
 import android.util.Log;
 
-import com.project.movies.popular.popularmovies1.Movie;
+import com.project.movies.popular.popularmovies.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;

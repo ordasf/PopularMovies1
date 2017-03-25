@@ -1,4 +1,4 @@
-package com.project.movies.popular.popularmovies1;
+package com.project.movies.popular.popularmovies;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
+import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;

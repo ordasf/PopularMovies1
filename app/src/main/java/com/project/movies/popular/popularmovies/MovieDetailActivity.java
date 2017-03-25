@@ -1,4 +1,4 @@
-package com.project.movies.popular.popularmovies1;
+package com.project.movies.popular.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.project.movies.popular.popularmovies1.utilities.MovieJSONUtils;
-import com.project.movies.popular.popularmovies1.utilities.NetworkUtils;
+import com.project.movies.popular.popularmovies.utilities.MovieJSONUtils;
+import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;

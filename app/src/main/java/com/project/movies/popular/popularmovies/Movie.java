@@ -1,4 +1,4 @@
-package com.project.movies.popular.popularmovies1;
+package com.project.movies.popular.popularmovies;
 
 /**
  * Class to contain the basic information of a Movie
