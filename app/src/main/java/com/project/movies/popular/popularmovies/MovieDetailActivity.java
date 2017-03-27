@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,9 +25,14 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URL;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Movie> {
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
+
+    private static final int MOVIE_LOADER_ID = 2000;
+
+    private static final String MOVIE_ID_KEY = "movie_id_key";
 
     private TextView mMovieTitleTextView;
 
@@ -84,66 +91,87 @@ public class MovieDetailActivity extends AppCompatActivity {
         URL imageURL = NetworkUtils.buildImageUrl(posterPath);
         Picasso.with(mMoviePosterImageView.getContext()).load(imageURL.toString()).into(mMoviePosterImageView);
 
-        new MovieDetailReleaseDateAsyncTask().execute(movieId);
+//        new MovieDetailReleaseDateAsyncTask().execute(movieId);
+
+        Bundle loaderBundle = new Bundle();
+        loaderBundle.putLong(MOVIE_ID_KEY, movieId);
+
+        LoaderManager loaderManager = getSupportLoaderManager();
+        if (loaderManager.getLoader(MOVIE_LOADER_ID) == null) {
+            loaderManager.initLoader(MOVIE_LOADER_ID, loaderBundle, this);
+        } else {
+            loaderManager.restartLoader(MOVIE_LOADER_ID, loaderBundle, this);
+        }
 
     }
 
-    public class MovieDetailReleaseDateAsyncTask extends AsyncTask<Long, Void, Movie> {
+    @Override
+    public android.support.v4.content.Loader<Movie> onCreateLoader(int id, final Bundle args) {
+        return new AsyncTaskLoader<Movie>(this) {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            hideErrorMessage();
-            showLoadingIndicator();
-        }
+            @Override
+            protected void onStartLoading() {
+                super.onStartLoading();
 
-        @Override
-        protected Movie doInBackground(Long... params) {
+                if (args == null) {
+                    return;
+                }
 
-            long movieId = 0L;
-            if (params != null) {
-                movieId = params[0];
+                hideErrorMessage();
+                showLoadingIndicator();
+
+                forceLoad();
+
             }
 
-            Movie movie = new Movie();
-            if (!isOnline()) {
-                // Check if the device is connected to the network, in case it's not don't bother
-                // to try to make de API calls, these are going to fail
-                Log.d(TAG, "No connectivity");
-                showErrorMessage();
+            @Override
+            public Movie loadInBackground() {
+
+                long movieId = args.getLong(MOVIE_ID_KEY);
+
+                Movie movie = new Movie();
+                if (!isOnline()) {
+                    // Check if the device is connected to the network, in case it's not don't bother
+                    // to try to make de API calls, these are going to fail
+                    Log.d(TAG, "No connectivity");
+                    showErrorMessage();
+                    return movie;
+                }
+
+                URL movieUrl = NetworkUtils.buildMovieDetailUrl(movieId);
+
+                String response = null;
+                try {
+                    response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "There is a problem parsing the JSON");
+                    showErrorMessage();
+                }
+
+                try {
+                    movie = MovieJSONUtils.getMovieDetailsFromJson(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "There is a problem parsing the JSON");
+                    showErrorMessage();
+                }
+
                 return movie;
             }
+        };
+    }
 
-            URL movieUrl = NetworkUtils.buildMovieDetailUrl(movieId);
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Movie> loader, Movie data) {
+        hideLoadingIndicator();
+        mSynopsisTextView.setText(data.getOverview());
+        mMovieReleaseDateTextView.append(data.getReleaseDate());
+        mMovieRatingTextView.append(Float.toString(data.getRating()));
+    }
 
-            String response = null;
-            try {
-                response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(TAG, "There is a problem parsing the JSON");
-                showErrorMessage();
-            }
-
-            try {
-                movie = MovieJSONUtils.getMovieDetailsFromJson(response);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "There is a problem parsing the JSON");
-                showErrorMessage();
-            }
-
-            return movie;
-        }
-
-        @Override
-        protected void onPostExecute(Movie response) {
-            super.onPostExecute(response);
-            hideLoadingIndicator();
-            mSynopsisTextView.setText(response.getOverview());
-            mMovieReleaseDateTextView.append(response.getReleaseDate());
-            mMovieRatingTextView.append(Float.toString(response.getRating()));
-        }
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Movie> loader) {
 
     }
 
