@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.project.movies.popular.popularmovies.adapters.ReviewListAdapter;
 import com.project.movies.popular.popularmovies.adapters.TrailerListAdapter;
 import com.project.movies.popular.popularmovies.beans.Movie;
 import com.project.movies.popular.popularmovies.beans.Review;
@@ -46,7 +47,6 @@ public class MovieDetailActivity extends AppCompatActivity
     private ImageView mMoviePosterImageView;
 
     private RecyclerView mTrailersRecyclerView;
-
     private TrailerListAdapter trailerListAdapter;
 
     private TextView mSynopsisTextView;
@@ -56,6 +56,7 @@ public class MovieDetailActivity extends AppCompatActivity
     private TextView mMovieRatingTextView;
 
     private RecyclerView mReviewsRecyclerView;
+    private ReviewListAdapter reviewListAdapter;
 
     private ProgressBar mLoadingDetail;
 
@@ -76,8 +77,8 @@ public class MovieDetailActivity extends AppCompatActivity
 
         mTrailersRecyclerView = (RecyclerView) findViewById(R.id.rv_trailers_list);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mTrailersRecyclerView.setLayoutManager(layoutManager);
+        LinearLayoutManager layoutManagerTrailers = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mTrailersRecyclerView.setLayoutManager(layoutManagerTrailers);
 
         mTrailersRecyclerView.setHasFixedSize(true);
 
@@ -89,6 +90,14 @@ public class MovieDetailActivity extends AppCompatActivity
         mMovieRatingTextView = (TextView) findViewById(R.id.tv_detail_rating);
 
         mReviewsRecyclerView = (RecyclerView) findViewById(R.id.rv_reviews_list);
+
+        LinearLayoutManager layoutManagerReviews = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mReviewsRecyclerView.setLayoutManager(layoutManagerReviews);
+
+        mReviewsRecyclerView.setHasFixedSize(true);
+
+        reviewListAdapter = new ReviewListAdapter();
+        mReviewsRecyclerView.setAdapter(reviewListAdapter);
 
         mLoadingDetail = (ProgressBar) findViewById(R.id.pb_loading_detail);
 
@@ -213,6 +222,7 @@ public class MovieDetailActivity extends AppCompatActivity
         mMovieReleaseDateTextView.append(data.getReleaseDate());
         mMovieRatingTextView.append(Float.toString(data.getRating()));
         trailerListAdapter.setTrailerList(data.getTrailers());
+        reviewListAdapter.setReviewList(data.getReviews());
 
     }
 
