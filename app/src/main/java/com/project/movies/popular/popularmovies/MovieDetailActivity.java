@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -16,6 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.project.movies.popular.popularmovies.beans.Movie;
+import com.project.movies.popular.popularmovies.beans.Review;
+import com.project.movies.popular.popularmovies.beans.Trailer;
 import com.project.movies.popular.popularmovies.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -24,6 +26,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Movie> {
@@ -91,8 +95,6 @@ public class MovieDetailActivity extends AppCompatActivity
         URL imageURL = NetworkUtils.buildImageUrl(posterPath);
         Picasso.with(mMoviePosterImageView.getContext()).load(imageURL.toString()).into(mMoviePosterImageView);
 
-//        new MovieDetailReleaseDateAsyncTask().execute(movieId);
-
         Bundle loaderBundle = new Bundle();
         loaderBundle.putLong(MOVIE_ID_KEY, movieId);
 
@@ -143,19 +145,40 @@ public class MovieDetailActivity extends AppCompatActivity
                 String response = null;
                 try {
                     response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
-                } catch (IOException e) {
+                    movie = MovieJSONUtils.getMovieDetailsFromJson(response);
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "There is a problem parsing the JSON");
+                    Log.e(TAG, "There is a problem retrieving the movie detail info");
                     showErrorMessage();
                 }
 
+                URL trailersUrl = NetworkUtils.buildTrailersUrl(movieId);
+
+                String trailersResponse = null;
+                List<Trailer> trailers = new ArrayList<>();
                 try {
-                    movie = MovieJSONUtils.getMovieDetailsFromJson(response);
-                } catch (JSONException e) {
+                    trailersResponse = NetworkUtils.getResponseFromHttpUrl(trailersUrl);
+                    trailers = MovieJSONUtils.getTrailersFromJson(trailersResponse);
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "There is a problem parsing the JSON");
+                    Log.e(TAG, "There is a problem retrieving the trailers info");
                     showErrorMessage();
                 }
+                movie.setTrailers(trailers);
+
+                URL reviewsUrl = NetworkUtils.buildReviewsUrl(movieId);
+
+                String reviewsResponse = null;
+                List<Review> reviews = new ArrayList<>();
+                try {
+                    reviewsResponse = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
+                    reviews = MovieJSONUtils.getReviewsFromJson(reviewsResponse);
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "There is a problem retrieving the reviews info");
+                    showErrorMessage();
+                }
+                movie.setReviews(reviews);
 
                 return movie;
             }

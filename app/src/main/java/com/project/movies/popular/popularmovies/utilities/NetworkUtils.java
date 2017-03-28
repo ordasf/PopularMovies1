@@ -29,6 +29,10 @@ public final class NetworkUtils {
 
     private static final MoviePosterSize IMAGE_SIZE_PATH = MoviePosterSize.W500;
 
+    private static final String MOVIE_TRAILERS_PATH = "videos";
+
+    private static final String MOVIE_REVIEWS_PATH = "reviews";
+
     private static final String API_KEY_QUERY = "api_key";
 
     final static String KEY = BuildConfig.API_KEY;
@@ -114,6 +118,50 @@ public final class NetworkUtils {
         Log.v(TAG, "Built movie detail URL " + url);
 
         return url;
+    }
+
+    public static URL buildTrailersUrl(long movieId) {
+
+        Uri uri = Uri.parse(BASE_MOVIES_URL).buildUpon()
+                .appendEncodedPath(Long.toString(movieId))
+                .appendPath(MOVIE_TRAILERS_PATH)
+                .appendQueryParameter(API_KEY_QUERY, KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Movie detail URL could not be built");
+        }
+
+        Log.v(TAG, "Built movie detail URL " + url);
+
+        return url;
+
+    }
+
+    public static URL buildReviewsUrl(long movieId) {
+
+        Uri uri = Uri.parse(BASE_MOVIES_URL).buildUpon()
+                .appendEncodedPath(Long.toString(movieId))
+                .appendPath(MOVIE_REVIEWS_PATH)
+                .appendQueryParameter(API_KEY_QUERY, KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Movie detail URL could not be built");
+        }
+
+        Log.v(TAG, "Built movie detail URL " + url);
+
+        return url;
+
     }
 
     /**

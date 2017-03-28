@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.project.movies.popular.popularmovies.beans.Movie;
 import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
