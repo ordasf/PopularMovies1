@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.project.movies.popular.popularmovies.adapters.MovieListAdapter;
 import com.project.movies.popular.popularmovies.beans.Movie;
 import com.project.movies.popular.popularmovies.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
@@ -32,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        MovieListAdapter.MovieListAdapterOnClickHandler, LoaderManager.LoaderCallbacks<List<Movie>> {
+        MovieListAdapter.MovieListAdapterOnClickHandler,
+        LoaderManager.LoaderCallbacks<List<Movie>> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
