@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -33,8 +34,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieDetailActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Movie> {
+public class MovieDetailActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Movie>,
+        TrailerListAdapter.TrailerListAdapterOnClickHandler {
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
 
@@ -82,7 +84,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
         mTrailersRecyclerView.setHasFixedSize(true);
 
-        trailerListAdapter = new TrailerListAdapter();
+        trailerListAdapter = new TrailerListAdapter(this);
         mTrailersRecyclerView.setAdapter(trailerListAdapter);
 
         mMovieReleaseDateTextView = (TextView) findViewById(R.id.tv_detail_release_date);
@@ -261,4 +263,10 @@ public class MovieDetailActivity extends AppCompatActivity
         mContainer.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onClick(Trailer trailer) {
+        // TODO Filter the trailers by type, we only want the youtube trailers!
+        // TODO Do this better
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
+    }
 }
