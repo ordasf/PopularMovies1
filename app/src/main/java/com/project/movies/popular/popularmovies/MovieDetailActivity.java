@@ -44,6 +44,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     private static final String MOVIE_ID_KEY = "movie_id_key";
 
+    private static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
+
     private TextView mMovieTitleTextView;
 
     private ImageView mMoviePosterImageView;
@@ -265,8 +267,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(Trailer trailer) {
-        // TODO Filter the trailers by type, we only want the youtube trailers!
-        // TODO Do this better
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey())));
+        Uri trailerUri = Uri.parse(YOUTUBE_BASE_URL + trailer.getKey());
+        startActivity(new Intent(Intent.ACTION_VIEW, trailerUri));
     }
 }

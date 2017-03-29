@@ -22,7 +22,6 @@ public final class Movie implements Parcelable {
 
     public Movie() {}
 
-    @Deprecated
     public Movie(long id, String title, String posterPath) {
         this.id = id;
         this.title = title;
