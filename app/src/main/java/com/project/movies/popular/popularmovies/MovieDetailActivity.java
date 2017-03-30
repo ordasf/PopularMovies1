@@ -186,6 +186,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
                 long movieId = args.getLong(MOVIE_ID_KEY);
 
                 Movie movie = new Movie();
+                movie.setId(movieId);
                 if (!isOnline()) {
                     // Check if the device is connected to the network, in case it's not don't bother
                     // to try to make de API calls, these are going to fail
@@ -196,9 +197,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
                 URL movieUrl = NetworkUtils.buildMovieDetailUrl(movieId);
 
-                String response = null;
                 try {
-                    response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
+                    String response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
                     movie = MovieJSONUtils.getMovieDetailsFromJson(response);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -208,10 +208,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
                 URL trailersUrl = NetworkUtils.buildTrailersUrl(movieId);
 
-                String trailersResponse = null;
                 List<Trailer> trailers = new ArrayList<>();
                 try {
-                    trailersResponse = NetworkUtils.getResponseFromHttpUrl(trailersUrl);
+                    String trailersResponse = NetworkUtils.getResponseFromHttpUrl(trailersUrl);
                     trailers = MovieJSONUtils.getTrailersFromJson(trailersResponse);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
