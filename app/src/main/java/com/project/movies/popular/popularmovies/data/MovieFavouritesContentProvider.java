@@ -16,14 +16,16 @@ public class MovieFavouritesContentProvider extends ContentProvider {
     private static final int FAVOURITES_ID = 1001;
 
     private MovieFavouritesDbHelper dbHelper;
-    private static final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher matcher = createMatcher();
 
-    static {
-        matcher.addURI(MovieFavouritesContract.BASE_CONTENT_URI.toString(),
+    private static UriMatcher createMatcher() {
+        UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcher.addURI(MovieFavouritesContract.CONTENT_AUTHORITY,
                 MovieFavouritesContract.MovieFavouriteEntry.FAVOURITES_PATH, FAVOURITES);
-        matcher.addURI(MovieFavouritesContract.BASE_CONTENT_URI.toString(),
+        uriMatcher.addURI(MovieFavouritesContract.CONTENT_AUTHORITY,
                 MovieFavouritesContract.MovieFavouriteEntry.FAVOURITES_PATH + "/#", FAVOURITES_ID);
-    };
+        return uriMatcher;
+    }
 
     @Override
     public boolean onCreate() {
@@ -52,14 +54,18 @@ public class MovieFavouritesContentProvider extends ContentProvider {
                 String[] params = {Long.toString(id)};
                 cursor = db.query(MovieFavouritesContract.MovieFavouriteEntry.TABLE_NAME,
                         null,
-                        MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID,
+                        MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID + "=?",
                         params,
                         null,
                         null,
                         null);
                 break;
-            default: throw new UnsupportedOperationException("The uri: " + uri.toString() + "did not match");
+            default:
+                throw new UnsupportedOperationException("The uri: " + uri.toString() + " did not match");
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -88,6 +94,8 @@ public class MovieFavouritesContentProvider extends ContentProvider {
             default: throw new UnsupportedOperationException();
         }
 
+        getContext().getContentResolver().notifyChange(uri, null);
+
         return returnUri;
     }
 
@@ -109,7 +117,9 @@ public class MovieFavouritesContentProvider extends ContentProvider {
                 break;
             default: throw new UnsupportedOperationException();
         }
-
+        if (elemsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return elemsDeleted;
     }
 

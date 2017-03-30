@@ -1,7 +1,11 @@
 package com.project.movies.popular.popularmovies;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,6 +27,7 @@ import com.project.movies.popular.popularmovies.adapters.TrailerListAdapter;
 import com.project.movies.popular.popularmovies.beans.Movie;
 import com.project.movies.popular.popularmovies.beans.Review;
 import com.project.movies.popular.popularmovies.beans.Trailer;
+import com.project.movies.popular.popularmovies.data.MovieFavouritesContract;
 import com.project.movies.popular.popularmovies.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -67,6 +72,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private LinearLayout mContainer;
 
     private TextView mErrorTextView;
+
+    private static Movie movie;
+    private static boolean isFavourite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +145,18 @@ public class MovieDetailActivity extends AppCompatActivity implements
             loaderManager.initLoader(MOVIE_LOADER_ID, loaderBundle, this);
         } else {
             loaderManager.restartLoader(MOVIE_LOADER_ID, loaderBundle, this);
+        }
+
+        // TODO FER Extract this to an AsyncTaskLoader
+        ContentResolver resolver = getContentResolver();
+
+        Uri movieUri = ContentUris.withAppendedId(MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI, movieId);
+        Cursor cursor = resolver.query(movieUri, null, null, null, null);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            // We know that the element exists in the databasa so it's a favourite!
+            isFavourite = true;
+            cursor.close();
         }
 
     }
@@ -227,12 +247,34 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mMovieRatingTextView.append(Float.toString(data.getRating()));
         trailerListAdapter.setTrailerList(data.getTrailers());
         reviewListAdapter.setReviewList(data.getReviews());
+        movie = data;
 
     }
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Movie> loader) {
 
+    }
+
+    public void markFavourite(View view) {
+        // TODO Fer do this in an AsyncTaskLoader with the proper callbacks
+        // TODO Fer change the icon when the movie is added to favourites!
+        ContentResolver resolver = getContentResolver();
+        if (isFavourite) {
+            // The button was pressed and the movie was already a favourite, so it should be removed
+            Uri deleteUri = ContentUris.withAppendedId(MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI, movie.getId());
+            resolver.delete(deleteUri, null, null);
+            isFavourite = false;
+        } else {
+            // Add the movie to favourite
+            Uri insertUri = MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI;
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID, movie.getId());
+            contentValues.put(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE, movie.getTitle());
+            contentValues.put(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+            resolver.insert(insertUri, contentValues);
+            isFavourite = true;
+        }
     }
 
     private void showLoadingIndicator() {
@@ -270,4 +312,5 @@ public class MovieDetailActivity extends AppCompatActivity implements
         Uri trailerUri = Uri.parse(YOUTUBE_BASE_URL + trailer.getKey());
         startActivity(new Intent(Intent.ACTION_VIEW, trailerUri));
     }
+
 }

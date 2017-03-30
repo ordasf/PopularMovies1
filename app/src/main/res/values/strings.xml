@@ -2,9 +2,11 @@
     <string name="app_name">Popular Movies</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="favourites">Favourites</string>
     <string name="iv_content_description">Movie poster</string>
     <string name="release_date">Date of the release: </string>
     <string name="average_rating">Average rating: </string>
     <string name="synopsis">Synopsis:</string>
     <string name="error_message">There was a problem retrieving the information</string>
+    <string name="favourite_button">Favourite</string>
 </resources>

@@ -27,7 +27,7 @@
         </activity>
 
         <provider
-            android:authorities="com.project.movies.popular.popularmovies.data"
+            android:authorities="com.project.movies.popular.popularmovies"
             android:name=".data.MovieFavouritesContentProvider"
             android:exported="false" />
     </application>

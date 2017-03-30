@@ -23,7 +23,7 @@ public final class MovieFavouritesDbHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + MovieFavouritesContract.MovieFavouriteEntry.TABLE_NAME + "(" +
                         MovieFavouritesContract.MovieFavouriteEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                         MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL," +
-                        MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE + " TEXT NOT NULL" +
+                        MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE + " TEXT NOT NULL," +
                         MovieFavouritesContract.MovieFavouriteEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL" +
                         ");";
         db.execSQL(SQL_CREATE_FAVOURITES_TABLE);

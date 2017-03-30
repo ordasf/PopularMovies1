@@ -1,9 +1,12 @@
 package com.project.movies.popular.popularmovies;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 
 import com.project.movies.popular.popularmovies.adapters.MovieListAdapter;
 import com.project.movies.popular.popularmovies.beans.Movie;
+import com.project.movies.popular.popularmovies.data.MovieFavouritesContract;
 import com.project.movies.popular.popularmovies.utilities.MovieJSONUtils;
 import com.project.movies.popular.popularmovies.utilities.NetworkUtils;
 
@@ -187,17 +191,36 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int idSelected = item.getItemId();
-        if (idSelected == R.id.action_order_popular) {
-            movieOrderType = MovieOrderType.POPULAR;
-            startLoader();
-            return true;
-        } else if (idSelected == R.id.action_order_top_rated) {
-            movieOrderType = MovieOrderType.TOP_RATED;
-            startLoader();
-            return true;
-        }
+        switch (idSelected) {
+            case R.id.action_order_popular:
+                movieOrderType = MovieOrderType.POPULAR;
+                startLoader();
+                return true;
+            case R.id.action_order_top_rated:
+                movieOrderType = MovieOrderType.TOP_RATED;
+                startLoader();
+                return true;
+            case R.id.action_favourites:
+                // TODO Fer Use AsyncTaskLoader
+                ContentResolver resolver = getContentResolver();
+                Uri uri = MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI;
+                Cursor cursor = resolver.query(uri, null, null, null, null);
+                List<Movie> movieList = new ArrayList<>();
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        long movieId = cursor.getLong(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID));
+                        String movieTitle = cursor.getString(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE));
+                        String posterPath = cursor.getString(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_POSTER_PATH));
+                        movieList.add(new Movie(movieId, movieTitle, posterPath));
+                    }
 
-        return super.onOptionsItemSelected(item);
+                    cursor.close();
+                }
+                movieListAdapter.setMovieList(movieList);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public boolean isOnline() {

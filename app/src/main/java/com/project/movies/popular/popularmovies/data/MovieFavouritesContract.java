@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 public final class MovieFavouritesContract {
 
     private static final String CONTENT_PREFIX = "content://";
-    private static final String CONTENT_AUTHORITY = "com.project.movies.popular.popularmovies";
+    public static final String CONTENT_AUTHORITY = "com.project.movies.popular.popularmovies";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse(CONTENT_PREFIX + CONTENT_AUTHORITY);
 
