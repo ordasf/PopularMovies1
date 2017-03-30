@@ -119,7 +119,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
 
-        Movie movie = null;
+        movie = null;
         if (intent.getExtras().containsKey("MOVIE")) {
             movie = (Movie) intent.getExtras().get("MOVIE");
         }
@@ -186,7 +186,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
                 long movieId = args.getLong(MOVIE_ID_KEY);
 
                 Movie movie = new Movie();
-                movie.setId(movieId);
                 if (!isOnline()) {
                     // Check if the device is connected to the network, in case it's not don't bother
                     // to try to make de API calls, these are going to fail
@@ -221,10 +220,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
                 URL reviewsUrl = NetworkUtils.buildReviewsUrl(movieId);
 
-                String reviewsResponse = null;
                 List<Review> reviews = new ArrayList<>();
                 try {
-                    reviewsResponse = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
+                    String reviewsResponse = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
                     reviews = MovieJSONUtils.getReviewsFromJson(reviewsResponse);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -246,8 +244,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mMovieRatingTextView.append(Float.toString(data.getRating()));
         trailerListAdapter.setTrailerList(data.getTrailers());
         reviewListAdapter.setReviewList(data.getReviews());
-        movie = data;
-
     }
 
     @Override

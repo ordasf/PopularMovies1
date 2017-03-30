@@ -95,4 +95,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         }
     }
 
+    public List<Movie> getMovieList() {
+        return movieList;
+    }
+
 }

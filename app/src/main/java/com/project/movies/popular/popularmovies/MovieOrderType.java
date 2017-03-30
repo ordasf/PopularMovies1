@@ -6,7 +6,8 @@ package com.project.movies.popular.popularmovies;
 
 public enum MovieOrderType {
     POPULAR("popular"),
-    TOP_RATED("top_rated");
+    TOP_RATED("top_rated"),
+    FAVOURITE("favourite");
 
     private final String value;
 

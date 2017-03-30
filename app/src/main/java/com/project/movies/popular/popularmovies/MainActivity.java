@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String INSTANCE_STATE_BUNDLE_ORDER_KEY = "order_key";
 
     private static final int LOADER_MOVIE_LIST_ID = 1000;
+    private static final int LOADER_MOVIE_FAVOURITES_LIST_ID = 2000;
     private static final String LOADER_ORDER_TYPE_KEY = "loader_order_type_key";
 
     private MovieOrderType movieOrderType = MovieOrderType.POPULAR;
@@ -78,19 +79,21 @@ public class MainActivity extends AppCompatActivity implements
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(INSTANCE_STATE_BUNDLE_ORDER_KEY)) {
-                String orderTypeString = savedInstanceState.getString(INSTANCE_STATE_BUNDLE_ORDER_KEY);
-                movieOrderType = MovieOrderType.getFromString(orderTypeString);
+                List<Movie> movieList = savedInstanceState.getParcelableArrayList(INSTANCE_STATE_BUNDLE_ORDER_KEY);
+                movieListAdapter.setMovieList(movieList);
             }
+        } else {
+            movieOrderType = MovieOrderType.POPULAR;
+            startLoader();
         }
-
-        startLoader();
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(INSTANCE_STATE_BUNDLE_ORDER_KEY, movieOrderType.getValue());
+        ArrayList<Movie> movieList = new ArrayList<>(movieListAdapter.getMovieList());
+        outState.putParcelableArrayList(INSTANCE_STATE_BUNDLE_ORDER_KEY, movieList);
     }
 
     @Override
@@ -102,71 +105,118 @@ public class MainActivity extends AppCompatActivity implements
 
     private void startLoader() {
 
+        int loader_id;
         Bundle loaderBundle = new Bundle();
-        loaderBundle.putString(LOADER_ORDER_TYPE_KEY, movieOrderType.getValue());
+        if (MovieOrderType.FAVOURITE == movieOrderType) {
+            loader_id = LOADER_MOVIE_FAVOURITES_LIST_ID;
+        } else {
+            loader_id = LOADER_MOVIE_LIST_ID;
+            loaderBundle.putString(LOADER_ORDER_TYPE_KEY, movieOrderType.getValue());
+        }
 
         LoaderManager loaderManager = getSupportLoaderManager();
-
-        Loader<List<Movie>> movieListLoader = loaderManager.getLoader(LOADER_MOVIE_LIST_ID);
+        Loader<List<Movie>> movieListLoader = loaderManager.getLoader(loader_id);
         if (movieListLoader == null) {
-            loaderManager.initLoader(LOADER_MOVIE_LIST_ID, loaderBundle, this);
+            loaderManager.initLoader(loader_id, loaderBundle, this);
         } else {
-            loaderManager.restartLoader(LOADER_MOVIE_LIST_ID, loaderBundle, this);
+            loaderManager.restartLoader(loader_id, loaderBundle, this);
         }
 
     }
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, final Bundle args) {
-        return new AsyncTaskLoader<List<Movie>>(this) {
 
-            @Override
-            protected void onStartLoading() {
-                super.onStartLoading();
-                if (args == null) {
-                    return;
-                }
-                hideErrorMessage();
-                showLoadingIndicator();
-                forceLoad();
-            }
+        switch(id) {
+            case LOADER_MOVIE_LIST_ID:
+                return new AsyncTaskLoader<List<Movie>>(this) {
 
-            @Override
-            public List<Movie> loadInBackground() {
+                    @Override
+                    protected void onStartLoading() {
+                        super.onStartLoading();
+                        if (args == null) {
+                            return;
+                        }
+                        hideErrorMessage();
+                        showLoadingIndicator();
+                        forceLoad();
+                    }
 
-                MovieOrderType option = MovieOrderType.getFromString(args.getString(LOADER_ORDER_TYPE_KEY));
+                    @Override
+                    public List<Movie> loadInBackground() {
 
-                List<Movie> movieList = new ArrayList<>();
-                if (!isOnline()) {
-                    Log.d(TAG, "No connectivity");
-                    showErrorMessage();
-                    return movieList;
-                }
+                        MovieOrderType option = MovieOrderType.getFromString(args.getString(LOADER_ORDER_TYPE_KEY));
 
-                URL movieUrl = NetworkUtils.buildUrl(option);
+                        List<Movie> movieList = new ArrayList<>();
+                        if (!isOnline()) {
+                            Log.d(TAG, "No connectivity");
+                            showErrorMessage();
+                            return movieList;
+                        }
 
-                String response = null;
-                try {
-                    response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "There is a problem getting the response");
-                    showErrorMessage();
-                }
+                        URL movieUrl = NetworkUtils.buildUrl(option);
+
+                        String response = null;
+                        try {
+                            response = NetworkUtils.getResponseFromHttpUrl(movieUrl);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "There is a problem getting the response");
+                            showErrorMessage();
+                        }
 
 
-                try {
-                    movieList.addAll(MovieJSONUtils.getMoviesFromJson(response));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d(TAG, "There is a problem parsing the JSON");
-                    showErrorMessage();
-                }
+                        try {
+                            movieList.addAll(MovieJSONUtils.getMoviesFromJson(response));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "There is a problem parsing the JSON");
+                            showErrorMessage();
+                        }
 
-                return movieList;
-            }
+                        return movieList;
+                    }
 
-        };
+                };
+            case LOADER_MOVIE_FAVOURITES_LIST_ID:
+                return new AsyncTaskLoader<List<Movie>>(this) {
+
+                    @Override
+                    protected void onStartLoading() {
+                        super.onStartLoading();
+                        if (args == null) {
+                            return;
+                        }
+                        hideErrorMessage();
+                        showLoadingIndicator();
+                        forceLoad();
+                    }
+
+                    @Override
+                    public List<Movie> loadInBackground() {
+
+                        ContentResolver resolver = getContentResolver();
+                        Uri uri = MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI;
+                        Cursor cursor = resolver.query(uri, null, null, null, null);
+                        List<Movie> movieList = new ArrayList<>();
+                        if (cursor != null) {
+                            while (cursor.moveToNext()) {
+                                long movieId = cursor.getLong(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID));
+                                String movieTitle = cursor.getString(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE));
+                                String posterPath = cursor.getString(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_POSTER_PATH));
+                                movieList.add(new Movie(movieId, movieTitle, posterPath));
+                            }
+
+                            cursor.close();
+                        }
+
+                        return movieList;
+                    }
+
+                };
+            default:
+                throw new UnsupportedOperationException("Loader not recognized");
+        }
     }
 
     @Override
@@ -201,22 +251,8 @@ public class MainActivity extends AppCompatActivity implements
                 startLoader();
                 return true;
             case R.id.action_favourites:
-                // TODO Fer Use AsyncTaskLoader
-                ContentResolver resolver = getContentResolver();
-                Uri uri = MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI;
-                Cursor cursor = resolver.query(uri, null, null, null, null);
-                List<Movie> movieList = new ArrayList<>();
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        long movieId = cursor.getLong(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID));
-                        String movieTitle = cursor.getString(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE));
-                        String posterPath = cursor.getString(cursor.getColumnIndex(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_POSTER_PATH));
-                        movieList.add(new Movie(movieId, movieTitle, posterPath));
-                    }
-
-                    cursor.close();
-                }
-                movieListAdapter.setMovieList(movieList);
+                movieOrderType = MovieOrderType.FAVOURITE;
+                startLoader();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -113,7 +113,7 @@ public class MovieFavouritesContentProvider extends ContentProvider {
                 long id = ContentUris.parseId(uri);
                 String[] params = {Long.toString(id)};
                 elemsDeleted = db.delete(MovieFavouritesContract.MovieFavouriteEntry.TABLE_NAME,
-                        MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID, params);
+                        MovieFavouritesContract.MovieFavouriteEntry.COLUMN_MOVIE_ID + "=?", params);
                 break;
             default: throw new UnsupportedOperationException();
         }
