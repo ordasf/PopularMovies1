@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -69,9 +71,11 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     private ProgressBar mLoadingDetail;
 
-    private LinearLayout mContainer;
+    private ConstraintLayout mContainer;
 
     private TextView mErrorTextView;
+
+    private Button mButtonFavourite;
 
     private static Movie movie;
     private static boolean isFavourite = false;
@@ -113,9 +117,11 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         mLoadingDetail = (ProgressBar) findViewById(R.id.pb_loading_detail);
 
-        mContainer = (LinearLayout) findViewById(R.id.ll_detail_container);
+        mContainer = (ConstraintLayout) findViewById(R.id.cl_container);
 
         mErrorTextView = (TextView) findViewById(R.id.tv_error_detail);
+
+        mButtonFavourite = (Button) findViewById(R.id.button_favourite);
 
         Intent intent = getIntent();
 
@@ -155,7 +161,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         if (cursor != null && cursor.getCount() > 0) {
             // We know that the element exists in the databasa so it's a favourite!
-            isFavourite = true;
+            setIsFavourite(true);
             cursor.close();
         }
 
@@ -259,7 +265,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             // The button was pressed and the movie was already a favourite, so it should be removed
             Uri deleteUri = ContentUris.withAppendedId(MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI, movie.getId());
             resolver.delete(deleteUri, null, null);
-            isFavourite = false;
+            setIsFavourite(false);
         } else {
             // Add the movie to favourite
             Uri insertUri = MovieFavouritesContract.MovieFavouriteEntry.CONTENT_URI;
@@ -268,7 +274,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             contentValues.put(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_TITLE, movie.getTitle());
             contentValues.put(MovieFavouritesContract.MovieFavouriteEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
             resolver.insert(insertUri, contentValues);
-            isFavourite = true;
+            setIsFavourite(true);
         }
     }
 
@@ -306,6 +312,15 @@ public class MovieDetailActivity extends AppCompatActivity implements
     public void onClick(Trailer trailer) {
         Uri trailerUri = Uri.parse(YOUTUBE_BASE_URL + trailer.getKey());
         startActivity(new Intent(Intent.ACTION_VIEW, trailerUri));
+    }
+
+    private void setIsFavourite(boolean favourite) {
+        isFavourite = favourite;
+        if (isFavourite) {
+            mButtonFavourite.setText(R.string.remove_favourite);
+        } else {
+            mButtonFavourite.setText(R.string.add_favourite);
+        }
     }
 
 }

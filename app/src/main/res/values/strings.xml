@@ -9,4 +9,6 @@
     <string name="synopsis">Synopsis:</string>
     <string name="error_message">There was a problem retrieving the information</string>
     <string name="favourite_button">Favourite</string>
+    <string name="add_favourite">Add Favourite</string>
+    <string name="remove_favourite">Remove Favourite</string>
 </resources>
