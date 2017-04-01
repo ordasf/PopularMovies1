@@ -7,8 +7,15 @@
     <string name="release_date">Date of the release: </string>
     <string name="average_rating">Average rating: </string>
     <string name="synopsis">Synopsis:</string>
+    <string name="synopsis_content">In the near future, a weary Logan cares for an ailing Professor X somewhere on the Mexican border. However, Logan\'s attempts to hide from the world and his legacy are upended when a young mutant arrives, pursued by dark forces.</string>
     <string name="error_message">There was a problem retrieving the information</string>
     <string name="favourite_button">Favourite</string>
     <string name="add_favourite">Add Favourite</string>
     <string name="remove_favourite">Remove Favourite</string>
+    <string name="trailers_label">Trailers:</string>
+    <string name="tool_trailer_name">Name of the trailer #yeah</string>
+    <string name="reviews_label">Reviews:</string>
+    <string name="review_written_by">Written by:</string>
+    <string name="tool_review_author">anythingbutfifi</string>
+    <string name="tool_review_content">**LOGAN REVIEW: THE WOLVERINE GETS A SUPER SEND-OFF**\r\n\r\n\Owing to its agitated hero’s misfortunes through the ages, this is a film that’s acutely aware of the dangers of emotional exploitation, and it spares its audience a similar fate. With Logan, Mangold and co-writer Scott Frank tell the definitive story of the Wolverine, in an involving and deeply satisfying series finale. It shows the fate of mutants when age starts to weary them, with stakes that feel real, and empathy that’s earned.\\r\n\r\nREAD THE FULL REVIEW AT SBS MOVIES: http://www.sbs.com.au/movies/review/logan-review-wolverine-gets-super-send</string>
 </resources>
