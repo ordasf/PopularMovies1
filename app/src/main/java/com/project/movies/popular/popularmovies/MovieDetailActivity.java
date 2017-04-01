@@ -299,8 +299,13 @@ public class MovieDetailActivity extends AppCompatActivity implements
     }
 
     private void showErrorMessage() {
-        mContainer.setVisibility(View.INVISIBLE);
-        mErrorTextView.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mContainer.setVisibility(View.INVISIBLE);
+                mErrorTextView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void hideErrorMessage() {
@@ -311,7 +316,10 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @Override
     public void onClick(Trailer trailer) {
         Uri trailerUri = Uri.parse(YOUTUBE_BASE_URL + trailer.getKey());
-        startActivity(new Intent(Intent.ACTION_VIEW, trailerUri));
+        Intent trailerIntent = new Intent(Intent.ACTION_VIEW, trailerUri);
+        if (trailerIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(trailerIntent);
+        }
     }
 
     private void setIsFavourite(boolean favourite) {

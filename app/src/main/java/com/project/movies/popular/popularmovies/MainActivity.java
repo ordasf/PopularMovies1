@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String INSTANCE_STATE_BUNDLE_ORDER_KEY = "order_key";
+    private static final String INSTANCE_STATE_MOVIE_LIST_KEY = "order_key";
 
     private static final int LOADER_MOVIE_LIST_ID = 1000;
     private static final int LOADER_MOVIE_FAVOURITES_LIST_ID = 2000;
@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements
         mErrorTextView = (TextView) findViewById(R.id.tv_error_main);
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(INSTANCE_STATE_BUNDLE_ORDER_KEY)) {
-                List<Movie> movieList = savedInstanceState.getParcelableArrayList(INSTANCE_STATE_BUNDLE_ORDER_KEY);
+            if (savedInstanceState.containsKey(INSTANCE_STATE_MOVIE_LIST_KEY)) {
+                List<Movie> movieList = savedInstanceState.getParcelableArrayList(INSTANCE_STATE_MOVIE_LIST_KEY);
                 movieListAdapter.setMovieList(movieList);
             }
         } else {
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         ArrayList<Movie> movieList = new ArrayList<>(movieListAdapter.getMovieList());
-        outState.putParcelableArrayList(INSTANCE_STATE_BUNDLE_ORDER_KEY, movieList);
+        outState.putParcelableArrayList(INSTANCE_STATE_MOVIE_LIST_KEY, movieList);
     }
 
     @Override
@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements
             loader_id = LOADER_MOVIE_FAVOURITES_LIST_ID;
         } else {
             loader_id = LOADER_MOVIE_LIST_ID;
-            loaderBundle.putString(LOADER_ORDER_TYPE_KEY, movieOrderType.getValue());
         }
+        loaderBundle.putString(LOADER_ORDER_TYPE_KEY, movieOrderType.getValue());
 
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<List<Movie>> movieListLoader = loaderManager.getLoader(loader_id);
@@ -184,9 +184,7 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     protected void onStartLoading() {
                         super.onStartLoading();
-                        if (args == null) {
-                            return;
-                        }
+
                         hideErrorMessage();
                         showLoadingIndicator();
                         forceLoad();
@@ -278,8 +276,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showErrorMessage() {
-        mMovieListRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorTextView.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mMovieListRecyclerView.setVisibility(View.INVISIBLE);
+                mErrorTextView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void hideErrorMessage() {
