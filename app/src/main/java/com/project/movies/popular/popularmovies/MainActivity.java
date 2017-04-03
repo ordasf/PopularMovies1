@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String INSTANCE_STATE_MOVIE_LIST_KEY = "order_key";
+    private static final String INSTANCE_STATE_MOVIE_LIST_KEY = "movie_list_key";
+    private static final String INSTANCE_STATE_ORDER_LIST_KEY = "order_key";
 
     private static final int LOADER_MOVIE_LIST_ID = 1000;
 
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements
                 List<Movie> movieList = savedInstanceState.getParcelableArrayList(INSTANCE_STATE_MOVIE_LIST_KEY);
                 movieListAdapter.setMovieList(movieList);
             }
+            if (savedInstanceState.containsKey(INSTANCE_STATE_ORDER_LIST_KEY)) {
+                movieOrderType = MovieOrderType.getFromString(savedInstanceState.getString(INSTANCE_STATE_ORDER_LIST_KEY));
+            }
         } else {
             movieOrderType = MovieOrderType.POPULAR;
         }
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         ArrayList<Movie> movieList = new ArrayList<>(movieListAdapter.getMovieList());
         outState.putParcelableArrayList(INSTANCE_STATE_MOVIE_LIST_KEY, movieList);
+        outState.putString(INSTANCE_STATE_ORDER_LIST_KEY, movieOrderType.getValue());
     }
 
     @Override
